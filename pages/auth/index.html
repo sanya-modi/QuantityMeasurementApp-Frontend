@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantity Measurement App Auth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/auth.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="auth-layout">
+      <div class="brand-card">
+        <div class="brand-illustration">
+          <div class="brand-circle">
+            <div class="brand-logo" aria-hidden="true">
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="background-color: transparent;">
+<circle cx="256" cy="256" r="230" stroke="#FFFFFF" stroke-width="12" fill="#FFFFFF" fill-opacity="0.1" stroke-dasharray="25,15"/>
+
+<g id="CentralExchange" transform="translate(181, 181)">
+<circle cx="75" cy="75" r="75" fill="#3B82F6"/> <path d="M45,60 H105 L95,50 M105,60 L95,70" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M105,90 H45 L55,80 M45,90 L55,100" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</g>
+
+<g id="TemperatureIcon" transform="translate(70, 70)">
+<rect x="25" y="10" width="20" height="70" rx="10" stroke="#EF4444" stroke-width="6" fill="#FFFFFF"/>
+<circle cx="35" cy="85" r="20" stroke="#EF4444" stroke-width="6" fill="#FFFFFF"/>
+<rect x="30" y="20" width="10" height="50" rx="5" fill="#EF4444"/>
+<circle cx="35" cy="85" r="10" fill="#EF4444"/>
+</g>
+
+<g id="LengthIcon" transform="translate(370, 70)">
+<rect x="10" y="30" width="100" height="30" rx="5" stroke="#F59E0B" stroke-width="6" fill="#FFFFFF"/>
+<line x1="30" y1="30" x2="30" y2="45" stroke="#F59E0B" stroke-width="4"/>
+<line x1="50" y1="30" x2="50" y2="45" stroke="#F59E0B" stroke-width="4"/>
+<line x1="70" y1="30" x2="70" y2="45" stroke="#F59E0B" stroke-width="4"/>
+<line x1="90" y1="30" x2="90" y2="45" stroke="#F59E0B" stroke-width="4"/>
+</g>
+
+<g id="VolumeIcon" transform="translate(70, 370)">
+<path d="M20,10 H80 L70,90 H30 Z" stroke="#10B981" stroke-width="6" fill="#FFFFFF" stroke-linejoin="round"/>
+<line x1="25" y1="30" x2="50" y2="30" stroke="#10B981" stroke-width="4"/>
+<line x1="28" y1="50" x2="50" y2="50" stroke="#10B981" stroke-width="4"/>
+<line x1="31" y1="70" x2="50" y2="70" stroke="#10B981" stroke-width="4"/>
+<path d="M31,70 H69 L67,90 H33 Z" fill="#10B981" fill-opacity="0.5"/>
+</g>
+
+<g id="WeightIcon" transform="translate(370, 370)">
+<path d="M10,90 H100 L80,10 H30 Z" stroke="#8B5CF6" stroke-width="6" fill="#FFFFFF" stroke-linejoin="round"/>
+<text x="55" y="65" font-family="Arial, sans-serif" font-weight="bold" font-size="36" fill="#8B5CF6" text-anchor="middle">kg</text>
+</g>
+
+<g stroke="#FFFFFF" stroke-width="4" stroke-dasharray="10,5">
+<line x1="140" y1="140" x2="190" y2="190"/>
+<line x1="372" y1="140" x2="322" y2="190"/>
+<line x1="140" y1="372" x2="190" y2="322"/>
+<line x1="372" y1="372" x2="322" y2="322"/>
+</g>
+
+</svg>
+            </div>
+          </div>
+        </div>
+        <h1>QUANTITY MEASUREMENT APP</h1>
+      </div>
+
+      <section class="form-card">
+        <div class="tabs" role="tablist" aria-label="Authentication tabs">
+          <button class="tab-button" id="loginTab" type="button" role="tab" aria-selected="false" aria-controls="loginPanel">LOGIN</button>
+          <button class="tab-button active" id="signupTab" type="button" role="tab" aria-selected="true" aria-controls="signupPanel">SIGNUP</button>
+        </div>
+
+        <form class="form-panel hidden" id="loginPanel" novalidate>
+          <label class="field-label" for="loginEmail">Email Id</label>
+          <input class="field-input" id="loginEmail" type="email" required maxlength="80" autocomplete="email">
+
+          <label class="field-label" for="loginPassword">Password</label>
+          <div class="password-wrap">
+            <input class="field-input" id="loginPassword" type="password" required minlength="6" maxlength="100" autocomplete="current-password">
+            <button class="eye-toggle" type="button" data-target="loginPassword" aria-label="Show password">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 4.27 3.28 3l17.72 18-1.28 1.27-3.02-3.06A11.95 11.95 0 0 1 12 20C7 20 2.73 16.89 1 12c.8-2.24 2.2-4.2 4.02-5.65L2 4.27Zm6.56 6.66a3.99 3.99 0 0 0 4.51 4.55l-4.5-4.55ZM12 6c5 0 9.27 3.11 11 8a12.6 12.6 0 0 1-2.9 4.48l-2.17-2.2A6 6 0 0 0 9.72 8.1L7.89 6.25A12.5 12.5 0 0 1 12 6Zm0 3a3 3 0 0 1 2.96 3.45l-3.4-3.44c.14-.01.29-.01.44-.01Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="primary-button" type="submit">Login</button>
+          <button class="google-button" type="button">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.655 32.657 29.231 36 24 36c-6.627 0-12-5.373-12-12S17.373 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.053 6.053 29.277 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917Z"/>
+              <path fill="#FF3D00" d="M6.306 14.691 12.88 19.51A11.96 11.96 0 0 1 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.053 6.053 29.277 4 24 4c-7.682 0-14.347 4.337-17.694 10.691Z"/>
+              <path fill="#4CAF50" d="M24 44c5.176 0 9.86-1.977 13.409-5.193l-6.19-5.238A11.94 11.94 0 0 1 24 36c-5.21 0-9.623-3.316-11.283-7.946l-6.525 5.027C9.5 39.556 16.227 44 24 44Z"/>
+              <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.569l.003-.002 6.19 5.238C36.971 39.193 44 34 44 24c0-1.341-.138-2.65-.389-3.917Z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+          <p class="switch-copy">New user? <button class="switch-link" id="showSignupLink" type="button">Signup</button></p>
+          <p class="form-status" id="loginStatus" aria-live="polite"></p>
+        </form>
+
+        <form class="form-panel" id="signupPanel" novalidate>
+          <label class="field-label" for="signupName">Full Name</label>
+          <input class="field-input" id="signupName" type="text" required minlength="3" maxlength="40" pattern="[A-Za-z ]{3,40}" autocomplete="name">
+
+          <label class="field-label" for="signupEmail">Email Id</label>
+          <input class="field-input" id="signupEmail" type="email" required maxlength="80" autocomplete="email">
+
+          <label class="field-label" for="signupPassword">Password</label>
+          <div class="password-wrap">
+            <input class="field-input" id="signupPassword" type="password" required minlength="6" maxlength="100" pattern="^(?=.*[A-Za-z])(?=.*\d).{6,100}$" autocomplete="new-password">
+            <button class="eye-toggle" type="button" data-target="signupPassword" aria-label="Show password">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 4.27 3.28 3l17.72 18-1.28 1.27-3.02-3.06A11.95 11.95 0 0 1 12 20C7 20 2.73 16.89 1 12c.8-2.24 2.2-4.2 4.02-5.65L2 4.27Zm6.56 6.66a3.99 3.99 0 0 0 4.51 4.55l-4.5-4.55ZM12 6c5 0 9.27 3.11 11 8a12.6 12.6 0 0 1-2.9 4.48l-2.17-2.2A6 6 0 0 0 9.72 8.1L7.89 6.25A12.5 12.5 0 0 1 12 6Zm0 3a3 3 0 0 1 2.96 3.45l-3.4-3.44c.14-.01.29-.01.44-.01Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <label class="field-label" for="signupMobile">Mobile Number</label>
+          <input class="field-input" id="signupMobile" type="tel" required inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" autocomplete="tel">
+
+          <button class="primary-button" type="submit">Signup</button>
+          <button class="google-button" type="button">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.655 32.657 29.231 36 24 36c-6.627 0-12-5.373-12-12S17.373 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.053 6.053 29.277 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917Z"/>
+              <path fill="#FF3D00" d="M6.306 14.691 12.88 19.51A11.96 11.96 0 0 1 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.053 6.053 29.277 4 24 4c-7.682 0-14.347 4.337-17.694 10.691Z"/>
+              <path fill="#4CAF50" d="M24 44c5.176 0 9.86-1.977 13.409-5.193l-6.19-5.238A11.94 11.94 0 0 1 24 36c-5.21 0-9.623-3.316-11.283-7.946l-6.525 5.027C9.5 39.556 16.227 44 24 44Z"/>
+              <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.05 12.05 0 0 1-4.084 5.569l.003-.002 6.19 5.238C36.971 39.193 44 34 44 24c0-1.341-.138-2.65-.389-3.917Z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+          <p class="switch-copy">Already have an account? <button class="switch-link" id="showLoginLink" type="button">Login</button></p>
+          <p class="form-status" id="signupStatus" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script src="../../assets/js/auth.js"></script>
+</body>
+</html>
