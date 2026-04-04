@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BalanceLogo } from "../components/BalanceLogo";
 import { GoogleIcon } from "../components/GoogleIcon";
+import { getToken } from "../lib/auth";
 import { fetchAuthStatus, loginOrRegister, saveAuth, saveUser, startGoogleLogin } from "../lib/auth";
 
 type Mode = "login" | "signup";
@@ -16,7 +17,6 @@ type SignupForm = {
   name: string;
   email: string;
   password: string;
-  mobile: string;
 };
 
 const initialLogin: LoginForm = {
@@ -27,8 +27,7 @@ const initialLogin: LoginForm = {
 const initialSignup: SignupForm = {
   name: "",
   email: "",
-  password: "",
-  mobile: ""
+  password: ""
 };
 
 export function AuthPage() {
@@ -50,14 +49,11 @@ export function AuthPage() {
     if (!/\S+@\S+\.\S+/.test(loginForm.email)) {
       return "Please enter a valid email address.";
     }
-    if (loginForm.password.length < 6 || loginForm.password.length > 100) {
-      return "Password must be 6-100 characters.";
-    }
     return "";
   }, [loginForm]);
 
   const signupError = useMemo(() => {
-    if (!signupForm.name || !signupForm.email || !signupForm.password || !signupForm.mobile) {
+    if (!signupForm.name || !signupForm.email || !signupForm.password) {
       return "";
     }
     if (!/^[A-Za-z ]{3,40}$/.test(signupForm.name)) {
@@ -66,16 +62,49 @@ export function AuthPage() {
     if (!/\S+@\S+\.\S+/.test(signupForm.email)) {
       return "Please enter a valid email address.";
     }
-    if (!/^(?=.*[A-Za-z])(?=.*\d).{6,100}$/.test(signupForm.password)) {
-      return "Password must be 6-100 characters and include at least one letter and one number.";
+    if (signupForm.password.length < 8 || signupForm.password.length > 100) {
+      return "Password must be 8-100 characters.";
     }
-    if (!/^\d{10}$/.test(signupForm.mobile)) {
-      return "Mobile number must be exactly 10 digits.";
+    if (!/[A-Z]/.test(signupForm.password)) {
+      return "Password must include at least one uppercase letter.";
+    }
+    if (!/\d/.test(signupForm.password)) {
+      return "Password must include at least one number.";
+    }
+    if (!/[^A-Za-z0-9]/.test(signupForm.password)) {
+      return "Password must include at least one special character.";
     }
     return "";
   }, [signupForm]);
 
+  const passwordIssues = useMemo(() => {
+    const issues: string[] = [];
+
+    if (signupForm.password.length > 0 && signupForm.password.length < 8) {
+      issues.push("At least 8 characters");
+    }
+    if (signupForm.password.length > 100) {
+      issues.push("No more than 100 characters");
+    }
+    if (signupForm.password.length > 0 && !/[A-Z]/.test(signupForm.password)) {
+      issues.push("At least one uppercase letter");
+    }
+    if (signupForm.password.length > 0 && !/\d/.test(signupForm.password)) {
+      issues.push("At least one number");
+    }
+    if (signupForm.password.length > 0 && !/[^A-Za-z0-9]/.test(signupForm.password)) {
+      issues.push("At least one special character");
+    }
+
+    return issues;
+  }, [signupForm.password]);
+
   useEffect(() => {
+    if (getToken()) {
+      navigate("/measurement", { replace: true });
+      return;
+    }
+
     const run = async () => {
       try {
         const status = await fetchAuthStatus();
@@ -131,7 +160,7 @@ export function AuthPage() {
   const submitSignup = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!signupForm.name || !signupForm.email || !signupForm.password || !signupForm.mobile) {
+    if (!signupForm.name || !signupForm.email || !signupForm.password) {
       setSignupStatus("Please fill out all signup fields.");
       return;
     }
@@ -220,6 +249,7 @@ export function AuthPage() {
               <FieldInput
                 id="loginEmail"
                 type="email"
+                placeholder="name@example.com"
                 value={loginForm.email}
                 onChange={(value) => {
                   setLoginForm((current) => ({ ...current, email: value }));
@@ -230,6 +260,7 @@ export function AuthPage() {
               <FieldLabel htmlFor="loginPassword" label="Password" />
               <PasswordField
                 id="loginPassword"
+                placeholder="Enter your password"
                 value={loginForm.password}
                 visible={loginVisible}
                 onToggle={() => setLoginVisible((current) => !current)}
@@ -286,6 +317,7 @@ export function AuthPage() {
               <FieldLabel htmlFor="signupName" label="Full Name" />
               <FieldInput
                 id="signupName"
+                placeholder="Your full name"
                 value={signupForm.name}
                 onChange={(value) => {
                   setSignupForm((current) => ({ ...current, name: value }));
@@ -297,6 +329,7 @@ export function AuthPage() {
               <FieldInput
                 id="signupEmail"
                 type="email"
+                placeholder="name@example.com"
                 value={signupForm.email}
                 onChange={(value) => {
                   setSignupForm((current) => ({ ...current, email: value }));
@@ -307,6 +340,7 @@ export function AuthPage() {
               <FieldLabel htmlFor="signupPassword" label="Password" />
               <PasswordField
                 id="signupPassword"
+                placeholder="Create a password"
                 value={signupForm.password}
                 visible={signupVisible}
                 onToggle={() => setSignupVisible((current) => !current)}
@@ -315,17 +349,7 @@ export function AuthPage() {
                   setSignupStatus("");
                 }}
               />
-
-              <FieldLabel htmlFor="signupMobile" label="Mobile Number" />
-              <FieldInput
-                id="signupMobile"
-                type="tel"
-                value={signupForm.mobile}
-                onChange={(value) => {
-                  setSignupForm((current) => ({ ...current, mobile: value.replace(/\D/g, "").slice(0, 10) }));
-                  setSignupStatus("");
-                }}
-              />
+              <PasswordHints issues={passwordIssues} />
 
               <button
                 type="submit"
@@ -355,7 +379,7 @@ export function AuthPage() {
               <StatusText text={signupStatus || signupError} />
 
               <p className="text-center text-sm text-slate-600">
-                Already logged in?{" "}
+                Already have an account?{" "}
                 <button
                   type="button"
                   onClick={() => {
@@ -392,15 +416,17 @@ function FieldLabel({ htmlFor, label }: FieldLabelProps) {
 type FieldInputProps = {
   id: string;
   type?: string;
+  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
 };
 
-function FieldInput({ id, type = "text", value, onChange }: FieldInputProps) {
+function FieldInput({ id, type = "text", placeholder, value, onChange }: FieldInputProps) {
   return (
     <input
       id={id}
       type={type}
+      placeholder={placeholder}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       className="mt-0.5 w-full rounded-[16px] border border-slate-200 bg-slate-50/75 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
@@ -410,18 +436,20 @@ function FieldInput({ id, type = "text", value, onChange }: FieldInputProps) {
 
 type PasswordFieldProps = {
   id: string;
+  placeholder?: string;
   value: string;
   visible: boolean;
   onToggle: () => void;
   onChange: (value: string) => void;
 };
 
-function PasswordField({ id, value, visible, onToggle, onChange }: PasswordFieldProps) {
+function PasswordField({ id, placeholder, value, visible, onToggle, onChange }: PasswordFieldProps) {
   return (
     <div className="relative mt-1">
       <input
         id={id}
         type={visible ? "text" : "password"}
+        placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-[16px] border border-slate-200 bg-slate-50/75 px-3 py-2.5 pr-10 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
@@ -443,4 +471,25 @@ type StatusTextProps = {
 
 function StatusText({ text }: StatusTextProps) {
   return <p className="min-h-4 text-xs font-medium leading-4 text-[#ad2f39] sm:text-sm">{text}</p>;
+}
+
+type PasswordHintsProps = {
+  issues: string[];
+};
+
+function PasswordHints({ issues }: PasswordHintsProps) {
+  if (issues.length === 0) {
+    return <p className="text-xs text-slate-500">Use 8-100 characters with at least one uppercase letter, one number, and one special character.</p>;
+  }
+
+  return (
+    <div className="rounded-[14px] border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+      <p className="font-semibold">Password is missing:</p>
+      <ul className="mt-1 list-disc space-y-1 pl-4">
+        {issues.map((issue) => (
+          <li key={issue}>{issue}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }

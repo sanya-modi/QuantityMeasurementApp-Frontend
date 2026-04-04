@@ -24,6 +24,39 @@ export function saveUser(user: User) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
+export function getStoredUser(): User | null {
+  const rawUser = localStorage.getItem(USER_KEY);
+
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawUser) as User;
+  } catch {
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
+}
+
+export function getUserDisplayName(user?: User | null) {
+  if (!user) {
+    return "";
+  }
+
+  const trimmedName = user.name?.trim();
+  if (trimmedName) {
+    return trimmedName;
+  }
+
+  const emailName = user.email?.trim();
+  if (emailName) {
+    return emailName;
+  }
+
+  return "User";
+}
+
 export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);

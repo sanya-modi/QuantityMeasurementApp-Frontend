@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BalanceLogo } from "../components/BalanceLogo";
 import { HistoryCard } from "../components/HistoryCard";
-import { fetchAuthStatus, logout } from "../lib/auth";
+import { fetchAuthStatus, getStoredUser, getUserDisplayName, logout, saveUser } from "../lib/auth";
 import { fetchHistory, measurementConfig, submitCalculation, type ActionKey, type MeasurementTypeKey } from "../lib/measurement";
-import type { CalculationResponse, HistoryItem, QuantityDTO } from "../types";
+import type { CalculationResponse, HistoryItem, QuantityDTO, User } from "../types";
 
 type ComparisonState = {
   fromValue: string;
@@ -40,6 +40,7 @@ export function MeasurementPage() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => getStoredUser());
   const [selectedType, setSelectedType] = useState<MeasurementTypeKey>("length");
   const [selectedAction, setSelectedAction] = useState<ActionKey>("comparison");
   const [statusText, setStatusText] = useState("");
@@ -76,6 +77,12 @@ export function MeasurementPage() {
       try {
         const status = await fetchAuthStatus();
         setAuthenticated(status.authenticated);
+        if (status.user) {
+          saveUser(status.user);
+          setCurrentUser(status.user);
+        } else if (!status.authenticated) {
+          setCurrentUser(null);
+        }
       } finally {
         setReady(true);
       }
@@ -147,6 +154,8 @@ export function MeasurementPage() {
     return String(result.resultValue);
   }, [result]);
 
+  const currentUserName = useMemo(() => getUserDisplayName(currentUser), [currentUser]);
+
   if (!ready) {
     return <div className="flex min-h-screen items-center justify-center text-sm font-medium text-slate-500">Loading...</div>;
   }
@@ -174,6 +183,7 @@ export function MeasurementPage() {
   const handleLogout = async () => {
     await logout();
     setAuthenticated(false);
+    setCurrentUser(null);
     setHistoryItems([]);
     setHistoryStatus("");
     setResult(null);
@@ -275,16 +285,22 @@ export function MeasurementPage() {
             <h1 className="text-lg font-bold text-white sm:text-xl">Quantity Measurement App</h1>
           </div>
           {authenticated ? (
-            <button
-              type="button"
-              onClick={() => {
-                void handleLogout();
-              }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:bg-white/20"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="hidden rounded-full border border-white/20 bg-white/10 px-4 py-2 text-right text-white sm:block">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/70">Signed in as</p>
+                <p className="text-sm font-semibold text-white">{currentUserName}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  void handleLogout();
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:bg-white/20"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           ) : null}
         </div>
       </nav>
