@@ -4,9 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { BalanceLogo } from "../components/BalanceLogo";
 import { GoogleIcon } from "../components/GoogleIcon";
 import { getToken } from "../lib/auth";
-import { fetchAuthStatus, loginOrRegister, saveAuth, saveUser, startGoogleLogin } from "../lib/auth";
+import { loginOrRegister, saveAuth, startGoogleLogin } from "../lib/auth";
 
 type Mode = "login" | "signup";
+
+type AuthPageProps = {
+  initialMode?: Mode;
+};
 
 type LoginForm = {
   email: string;
@@ -30,10 +34,10 @@ const initialSignup: SignupForm = {
   password: ""
 };
 
-export function AuthPage() {
+export function AuthPage({ initialMode = "signup" }: AuthPageProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [mode, setMode] = useState<Mode>("signup");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [loginForm, setLoginForm] = useState<LoginForm>(initialLogin);
   const [signupForm, setSignupForm] = useState<SignupForm>(initialSignup);
   const [loginVisible, setLoginVisible] = useState(false);
@@ -100,23 +104,22 @@ export function AuthPage() {
   }, [signupForm.password]);
 
   useEffect(() => {
-    if (getToken()) {
-      navigate("/measurement", { replace: true });
-      return;
-    }
+    setMode(initialMode);
+  }, [initialMode]);
 
-    const run = async () => {
-      try {
-        const status = await fetchAuthStatus();
-        if (status.authenticated) {
-          if (status.user) saveUser(status.user);
-          navigate("/measurement", { replace: true });
-        }
-      } catch {
-        // not authenticated, stay on auth page
-      }
-    };
-    void run();
+  const switchMode = (nextMode: Mode) => {
+    setMode(nextMode);
+    setLoginStatus("");
+    setSignupStatus("");
+    navigate(nextMode === "login" ? "/login" : "/signup", { replace: true });
+  };
+
+  useEffect(() => {
+    const token = getToken();
+
+    if (token) {
+      navigate("/measurement", { replace: true });
+    }
   }, [navigate]);
 
   useEffect(() => {
@@ -127,7 +130,7 @@ export function AuthPage() {
 
     setMode("login");
     setLoginStatus(state.error);
-    navigate(location.pathname, { replace: true, state: null });
+    navigate("/login", { replace: true, state: null });
   }, [location.pathname, location.state, navigate]);
 
   const submitLogin = async (event: React.FormEvent) => {
@@ -217,11 +220,7 @@ export function AuthPage() {
           <div className="grid grid-cols-2 gap-2 rounded-[20px] bg-slate-100/90 p-1">
             <button
               type="button"
-              onClick={() => {
-                setMode("login");
-                setLoginStatus("");
-                setSignupStatus("");
-              }}
+              onClick={() => switchMode("login")}
               className={`rounded-[16px] px-3 py-2 text-center text-sm font-semibold transition ${
                 mode === "login" ? "bg-white text-slate-900 shadow-sm shadow-slate-200" : "text-slate-500 hover:bg-white/60"
               }`}
@@ -230,11 +229,7 @@ export function AuthPage() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                setMode("signup");
-                setLoginStatus("");
-                setSignupStatus("");
-              }}
+              onClick={() => switchMode("signup")}
               className={`rounded-[16px] px-3 py-2 text-center text-sm font-semibold transition ${
                 mode === "signup" ? "bg-white text-slate-900 shadow-sm shadow-slate-200" : "text-slate-500 hover:bg-white/60"
               }`}
@@ -301,11 +296,7 @@ export function AuthPage() {
                 New user?{" "}
                 <button
                   type="button"
-                  onClick={() => {
-                    setMode("signup");
-                    setLoginStatus("");
-                    setSignupStatus("");
-                  }}
+                  onClick={() => switchMode("signup")}
                   className="font-semibold text-brand-600 transition hover:text-brand-700"
                 >
                   Signup
@@ -382,11 +373,7 @@ export function AuthPage() {
                 Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => {
-                    setMode("login");
-                    setLoginStatus("");
-                    setSignupStatus("");
-                  }}
+                  onClick={() => switchMode("login")}
                   className="font-semibold text-brand-600 transition hover:text-brand-700"
                 >
                   Login

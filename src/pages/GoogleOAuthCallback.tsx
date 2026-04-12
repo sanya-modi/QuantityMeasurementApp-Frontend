@@ -25,7 +25,7 @@ export function GoogleOAuthCallback() {
 
         if (error) {
           clearAuth();
-          navigate("/auth", { replace: true, state: { error } });
+          navigate("/login", { replace: true, state: { error } });
           return;
         }
 
@@ -37,7 +37,7 @@ export function GoogleOAuthCallback() {
             return;
           } catch {
             clearAuth();
-            navigate("/auth", { replace: true, state: { error: "Failed to load user" } });
+            navigate("/login", { replace: true, state: { error: "Failed to load user" } });
             return;
           }
         }
@@ -52,11 +52,11 @@ export function GoogleOAuthCallback() {
         }
 
         clearAuth();
-        navigate("/auth", { replace: true, state: { error: "Google login did not return a token." } });
+        navigate("/login", { replace: true, state: { error: "Google login did not return a token." } });
       } catch (err) {
         console.error("OAuth callback error:", err);
         clearAuth();
-        navigate("/auth", { replace: true, state: { error: "Unable to complete Google login." } });
+        navigate("/login", { replace: true, state: { error: "Unable to complete Google login." } });
       }
     };
 

@@ -3,12 +3,29 @@ import type { AuthResponse, AuthStatusResponse, User } from "../types";
 
 const buildUrl = (path: string) => `${API_BASE_URL}${path}`;
 
+function envFlag(name: string, defaultValue: boolean) {
+  const value = import.meta.env[name];
+
+  if (value === undefined || value === "") {
+    return defaultValue;
+  }
+
+  return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
+}
+
 function getOAuthBaseUrl() {
+  if (envFlag("VITE_PREFER_SAME_ORIGIN_OAUTH_START", false)) {
+    return "";
+  }
+
   return import.meta.env.VITE_OAUTH_BASE_URL || API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8080`;
 }
 
 function getOAuthStartPath() {
-  return import.meta.env.VITE_OAUTH_START_PATH || "/oauth2/authorization/google";
+  const directPath = import.meta.env.VITE_OAUTH_DIRECT_START_PATH || "/oauth2/authorization/google";
+  const proxiedPath = import.meta.env.VITE_OAUTH_START_PATH || directPath;
+
+  return envFlag("VITE_USE_DIRECT_OAUTH_START", true) ? directPath : proxiedPath;
 }
 
 export function getToken() {

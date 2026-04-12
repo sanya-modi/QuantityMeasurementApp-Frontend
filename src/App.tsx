@@ -8,7 +8,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/measurement" replace />} />
-      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/auth" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<AuthPage initialMode="login" />} />
+      <Route path="/signup" element={<AuthPage initialMode="signup" />} />
       <Route path="/oauth-callback" element={<GoogleOAuthCallback />} />
       <Route path="/history" element={<HistoryPage />} />
       <Route path="/measurement" element={<MeasurementPage />} />
