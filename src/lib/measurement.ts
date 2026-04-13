@@ -1,6 +1,6 @@
 import type { CalculationResponse, HistoryItem, QuantityDTO } from "../types";
 import { API_BASE_URL } from "../config";
-import { getToken } from "./auth";
+import { clearAuth, getToken } from "./auth";
 
 const buildUrl = (path: string) => `${API_BASE_URL}${path}`;
 
@@ -45,20 +45,32 @@ export type ActionKey = "comparison" | "conversion" | "arithmetic";
 
 export async function submitCalculation(endpoint: string, payload: { thisQuantityDTO: QuantityDTO; thatQuantityDTO: QuantityDTO }) {
   const token = getToken();
-  const headers: HeadersInit = {
+  const baseHeaders: HeadersInit = {
     "Content-Type": "application/json"
   };
+  const headers: HeadersInit = { ...baseHeaders };
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(buildUrl(endpoint), {
+  let response = await fetch(buildUrl(endpoint), {
     method: "POST",
     headers,
     credentials: "include",
     body: JSON.stringify(payload)
   });
+
+  // If a stale token is present, backend can reject with 401/403 even for public calculations.
+  if (token && (response.status === 401 || response.status === 403)) {
+    clearAuth();
+    response = await fetch(buildUrl(endpoint), {
+      method: "POST",
+      headers: baseHeaders,
+      credentials: "include",
+      body: JSON.stringify(payload)
+    });
+  }
 
   const data = await response.json().catch(() => ({}));
 

@@ -88,6 +88,9 @@ export async function fetchAuthStatus(): Promise<AuthStatusResponse> {
   });
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      clearAuth();
+    }
     return { authenticated: false };
   }
 
@@ -103,6 +106,9 @@ export async function fetchCurrentUser(token?: string) {
   });
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      clearAuth();
+    }
     throw new Error("Unable to load current user.");
   }
 
