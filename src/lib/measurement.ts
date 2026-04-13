@@ -57,7 +57,7 @@ export async function submitCalculation(endpoint: string, payload: { thisQuantit
   let response = await fetch(buildUrl(endpoint), {
     method: "POST",
     headers,
-    credentials: "include",
+    credentials: "omit",
     body: JSON.stringify(payload)
   });
 
@@ -67,7 +67,7 @@ export async function submitCalculation(endpoint: string, payload: { thisQuantit
     response = await fetch(buildUrl(endpoint), {
       method: "POST",
       headers: baseHeaders,
-      credentials: "include",
+      credentials: "omit",
       body: JSON.stringify(payload)
     });
   }

@@ -300,6 +300,7 @@ copy .env.example .env
 Environment variables used by the frontend:
 
 - `VITE_API_BASE_URL`
+- `VITE_PREFER_SAME_ORIGIN_API`
 - `VITE_OAUTH_BASE_URL`
 - `VITE_OAUTH_START_PATH`
 - `VITE_OAUTH_DIRECT_START_PATH`
@@ -309,11 +310,16 @@ Recommended local values:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080
+VITE_PREFER_SAME_ORIGIN_API=false
 VITE_OAUTH_BASE_URL=http://localhost:8080
 VITE_OAUTH_START_PATH=/auth/google
 VITE_OAUTH_DIRECT_START_PATH=/oauth2/authorization/google
 VITE_USE_DIRECT_OAUTH_START=false
 ```
+
+For deployed environments behind Nginx where `/api` is proxied to the backend,
+leave `VITE_PREFER_SAME_ORIGIN_API=true` (default) so the browser calls same-origin `/api/...`
+instead of a cross-origin backend URL.
 
 ### 3. Start the Frontend
 
