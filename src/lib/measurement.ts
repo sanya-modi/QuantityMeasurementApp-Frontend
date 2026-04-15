@@ -1,6 +1,6 @@
 import type { CalculationResponse, HistoryItem, QuantityDTO } from "../types";
 import { API_BASE_URL } from "../config";
-import { clearAuth, getToken } from "./auth";
+import { getToken } from "./auth";
 
 const buildUrl = (path: string) => `${API_BASE_URL}${path}`;
 
@@ -61,9 +61,8 @@ export async function submitCalculation(endpoint: string, payload: { thisQuantit
     body: JSON.stringify(payload)
   });
 
-  // If a stale token is present, backend can reject with 401/403 even for public calculations.
+  // Some calculation endpoints are public; if auth fails, retry as guest without dropping saved token.
   if (token && (response.status === 401 || response.status === 403)) {
-    clearAuth();
     response = await fetch(buildUrl(endpoint), {
       method: "POST",
       headers: baseHeaders,
