@@ -116,32 +116,6 @@ async function requestWithAuth(path: string, options: RequestInit = {}) {
   });
 }
 
-async function runDeleteCandidates(
-  candidates: Array<{ path: string; method?: "DELETE" | "POST"; body?: object }>
-) {
-  let lastErrorMessage = "Unable to update history.";
-
-  for (const candidate of candidates) {
-    const response = await requestWithAuth(candidate.path, {
-      method: candidate.method ?? "DELETE",
-      body: candidate.body ? JSON.stringify(candidate.body) : undefined
-    });
-
-    if (response.ok) {
-      return;
-    }
-
-    const data = await response.json().catch(() => ({}));
-    lastErrorMessage = (data && (data.message || data.errorMessage)) || lastErrorMessage;
-
-    if (response.status !== 404 && response.status !== 405) {
-      break;
-    }
-  }
-
-  throw new Error(lastErrorMessage);
-}
-
 export async function clearAllHistory() {
   const response = await requestWithAuth("/api/v1/quantities/my/history", {
     method: "DELETE"

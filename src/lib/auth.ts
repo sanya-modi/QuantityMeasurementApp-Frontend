@@ -14,7 +14,7 @@ function envFlag(name: string, defaultValue: boolean) {
 }
 
 function getOAuthBaseUrl() {
-  if (envFlag("VITE_PREFER_SAME_ORIGIN_OAUTH_START", false)) {
+  if (envFlag("VITE_PREFER_SAME_ORIGIN_OAUTH_START", true)) {
     return "";
   }
 
@@ -25,7 +25,7 @@ function getOAuthStartPath() {
   const directPath = import.meta.env.VITE_OAUTH_DIRECT_START_PATH || "/oauth2/authorization/google";
   const proxiedPath = import.meta.env.VITE_OAUTH_START_PATH || directPath;
 
-  return envFlag("VITE_USE_DIRECT_OAUTH_START", true) ? directPath : proxiedPath;
+  return envFlag("VITE_USE_DIRECT_OAUTH_START", false) ? directPath : proxiedPath;
 }
 
 export function getToken() {
